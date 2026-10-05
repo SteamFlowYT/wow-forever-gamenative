@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="WoW Forever Beta on GameNative: clean ARM64 setup for Adreno 830/840 with custom Proton, DXVK and patched Turnip.">
+<title>WoW Forever on GameNative</title>
+<style>
+:root{
+  --bg:#090c12;--panel:#101722;--panel2:#151f2d;--text:#edf3fb;--muted:#9cadc2;
+  --line:#26354a;--blue:#55aaff;--cyan:#5ee3d1;--green:#63e6a5;--amber:#ffc66d;
+  --red:#ff7c87;--code:#080b10;--max:1080px
+}
+*{box-sizing:border-box} body{margin:0;background:radial-gradient(circle at 50% -20%,#162a43 0,#090c12 42%);color:var(--text);font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+a{color:var(--blue)} code,pre{font-family:ui-monospace,SFMono-Regular,Consolas,monospace}
+.wrap{max-width:var(--max);margin:auto;padding:0 22px}
+.hero{padding:72px 0 40px}.eyebrow{color:var(--cyan);font-weight:800;letter-spacing:.12em;text-transform:uppercase;font-size:.78rem}
+h1{font-size:clamp(2.4rem,6vw,5rem);line-height:1.02;margin:.3rem 0 1rem;letter-spacing:-.045em}
+h2{font-size:2rem;margin:3.2rem 0 1rem} h3{margin:2rem 0 .5rem}
+.lead{font-size:1.18rem;max-width:760px;color:#c7d3e3}.badges{display:flex;flex-wrap:wrap;gap:8px;margin:20px 0}
+.badge{border:1px solid var(--line);background:#0d1420;border-radius:999px;padding:6px 10px;color:#bed0e6;font-size:.86rem}
+.actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:26px}.btn{display:inline-block;text-decoration:none;background:var(--blue);color:#06111e!important;font-weight:800;padding:12px 16px;border-radius:10px}.btn.secondary{background:#182437;color:#dceaff!important;border:1px solid #30435e}
+.notice{border:1px solid #315374;background:#101d2b;border-radius:14px;padding:16px 18px;margin:20px 0}.warn{border-color:#72572d;background:#221a0f}.danger{border-color:#713541;background:#241116}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px}.card{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:16px;padding:18px}
+.card h3{margin-top:0}.num{display:inline-grid;place-items:center;width:34px;height:34px;border-radius:10px;background:#1c3552;color:#8bc7ff;font-weight:900;margin-bottom:10px}
+table{width:100%;border-collapse:collapse;background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden}th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line)}th{background:#152133}
+pre{background:var(--code);border:1px solid var(--line);padding:14px;border-radius:12px;overflow:auto;color:#d8e7f9}
+.download{display:flex;gap:12px;align-items:center;justify-content:space-between;border:1px solid var(--line);background:#0f1722;padding:14px;border-radius:12px;margin:9px 0}.download small{display:block;color:var(--muted)}
+.status-ok{color:var(--green);font-weight:800}.status-test{color:var(--amber);font-weight:800}
+.toc{display:flex;flex-wrap:wrap;gap:8px}.toc a{text-decoration:none;border:1px solid var(--line);padding:7px 10px;border-radius:8px;background:#0f1620}
+footer{margin-top:70px;border-top:1px solid var(--line);padding:28px 0 50px;color:var(--muted)}
+@media(max-width:650px){.hero{padding-top:42px}.download{align-items:flex-start;flex-direction:column}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="hero">
+  <div class="eyebrow">Community compatibility project</div>
+  <h1>WoW Forever<br>on GameNative</h1>
+  <p class="lead">A clean one-container setup for Blizzard's native Windows ARM64 client on Snapdragon/Adreno Android hardware, using custom Proton, ARM64 DXVK and a patched Turnip driver.</p>
+  <div class="badges">
+    <span class="badge">✅ Adreno 840 confirmed</span>
+    <span class="badge">✅ Adreno 830 / Odin 3 confirmed</span>
+    <span class="badge">GameNative 1.2.1</span>
+    <span class="badge">Unofficial</span>
+  </div>
+  <div class="actions">
+    <a class="btn" href="#downloads">Download files</a>
+    <a class="btn secondary" href="#guide">Start the guide</a>
+  </div>
+</header>
+
+<div class="notice">
+<strong>The rule that makes this setup clean:</strong> Battle.net, the WoW installation and the direct WoW launcher all use the <strong>same GameNative card/container</strong>. Keep the final game at <code>C:\Program Files (x86)\World of Warcraft</code> so Battle.net can update it in place.
+</div>
+
+<nav class="toc">
+<a href="#downloads">Downloads</a><a href="#guide">Setup</a><a href="#settings">Settings</a><a href="#updates">Updates</a><a href="#compat">Compatibility</a><a href="#troubleshooting">Troubleshooting</a>
+</nav>
+
+<section id="downloads">
+<h2>Downloads</h2>
+<p>The large binaries belong in GitHub Releases. The source patches and scripts stay in the repository.</p>
+
+<div class="download"><div><strong>Custom ARM64 Proton</strong><small>Wine 11 / ARM64EC package with the WoW ARM64 fixes</small></div><a class="btn" href="https://github.com/SteamFlowYT/wow-forever-gamenative/releases/latest/download/proton-11.0-90624-arm64ec.wcp">Download</a></div>
+<div class="download"><div><strong>Custom ARM64 DXVK</strong><small>D3D11 + DXGI, pure Windows ARM64</small></div><a class="btn" href="https://github.com/SteamFlowYT/wow-forever-gamenative/releases/latest/download/dxvk-2.4.1-wow-aarch64-test.wcp">Download</a></div>
+<div class="download"><div><strong>Patched A8xx Turnip</strong><small>Gen8 V32 + WoW scheduler fix; used on A840 and A830</small></div><a class="btn" href="https://github.com/SteamFlowYT/wow-forever-gamenative/releases/latest/download/Turnip-V32-RP6sched-A8xx.zip">Download</a></div>
+<div class="download"><div><strong>Original A740 / RP6 Turnip</strong><small>Authentic original <code>turnip-wow-scheduler-test.zip</code>; verified SHA-256</small></div><a class="btn secondary" href="https://github.com/SteamFlowYT/wow-forever-gamenative/releases/latest/download/turnip-wow-scheduler-test.zip">Download</a></div>
+<div class="download"><div><strong>Checksums</strong><small>SHA-256 for release assets</small></div><a class="btn secondary" href="https://github.com/SteamFlowYT/wow-forever-gamenative/releases/latest/download/SHA256SUMS.txt">View</a></div>
+
+<div class="warn notice"><strong>Not included:</strong> World of Warcraft game data, Battle.net installer, account information, or Blizzard artwork. Download Battle.net from Blizzard and use your own account/client access.</div>
+</section>
+
+<section id="guide">
+<h2>Clean setup</h2>
+<div class="grid">
+<div class="card"><div class="num">1</div><h3>Import Proton</h3><p>GameNative → Settings → Wine/Proton Manager → <strong>Import WCP Package</strong>.</p><code>proton-11.0-90624-arm64ec.wcp</code></div>
+<div class="card"><div class="num">2</div><h3>Import DXVK</h3><p>Settings → Contents Manager → <strong>Import WCP Package</strong>.</p><code>dxvk-2.4.1-wow-aarch64-test.wcp</code></div>
+<div class="card"><div class="num">3</div><h3>Import Turnip</h3><p>Settings → Driver Manager → <strong>Import ZIP from device</strong>. Do not unpack it.</p><code>A830/A840: Turnip-V32-RP6sched-A8xx.zip</code><br><code>A740/RP6: turnip-wow-scheduler-test.zip</code></div>
+<div class="card"><div class="num">4</div><h3>Create one card</h3><p>Add <code>Battle.net-Setup.exe</code> as the custom game. This card/container will later run both Battle.net and WoW.</p></div>
+</div>
+
+<h3>Install Battle.net</h3>
+<p>Install Battle.net to its normal C: location. Do not install Battle.net to D: or G:.</p>
+<pre>C:\Program Files (x86)\Battle.net</pre>
+
+<h3>Install Forever</h3>
+<p>Open Battle.net in the <strong>same container</strong>, then install WoW Forever to:</p>
+<pre>C:\Program Files (x86)\World of Warcraft</pre>
+<p>Wait for the download to finish and confirm:</p>
+<pre>C:\Program Files (x86)\World of Warcraft\_classic_beta_\WowB-ARM64.exe</pre>
+
+<h3>Direct launch</h3>
+<p>Use <a href="scripts/Launch-WoW-Direct.bat"><code>scripts/Launch-WoW-Direct.bat</code></a>. It starts the ARM64 client with <code>-d3d11</code>.</p>
+</section>
+
+<section id="settings">
+<h2>GameNative settings</h2>
+<table>
+<tr><th>Setting</th><th>Value</th></tr>
+<tr><td>Container Variant</td><td><code>bionic</code></td></tr>
+<tr><td>Wine</td><td><code>proton-11.0-90624-arm64ec-1</code></td></tr>
+<tr><td>FEXCore 32 / 64 bit</td><td><code>2609-0</code></td></tr>
+<tr><td>Graphics Driver</td><td><code>Wrapper</code></td></tr>
+<tr><td>Graphics Driver Version</td><td><code>Turnip-V32-RP6sched</code></td></tr>
+<tr><td>Use Adrenotools Turnip</td><td>ON</td></tr>
+<tr><td>Display Renderer</td><td><code>Vulkan</code></td></tr>
+<tr><td>DX Wrapper</td><td><code>DXVK</code></td></tr>
+<tr><td>DXVK Version</td><td><code>2.4.1-wow-aarch64-test-1</code></td></tr>
+<tr><td>WINEESYNC</td><td>OFF</td></tr>
+<tr><td>Starting resolution</td><td>1280×720</td></tr>
+</table>
+<p>Environment variables:</p>
+<pre>TU_DEBUG=noconform,sysmem
+MESA_VK_WSI_PRESENT_MODE=mailbox</pre>
+</section>
+
+<section id="updates">
+<h2>Updating later</h2>
+<p>No second copy is required.</p>
+<ol>
+<li>Launch Battle.net inside the same GameNative card/container.</li>
+<li>Let it patch <code>C:\Program Files (x86)\World of Warcraft</code>.</li>
+<li>Close Battle.net.</li>
+<li>Launch WoW directly again.</li>
+</ol>
+</section>
+
+<section id="compat">
+<h2>Compatibility</h2>
+<table>
+<tr><th>GPU</th><th>Example</th><th>Status</th></tr>
+<tr><td>Adreno 840</td><td>RedMagic 11 Pro</td><td class="status-ok">Confirmed</td></tr>
+<tr><td>Adreno 830</td><td>AYN Odin 3</td><td class="status-ok">Confirmed</td></tr>
+<tr><td>Adreno 740</td><td>Retroid Pocket 6</td><td class="status-ok">Confirmed with original RP6 driver</td></tr>
+<tr><td>Adreno 750 / 730</td><td>Other Snapdragon handhelds/phones</td><td class="status-test">Needs testing</td></tr>
+<tr><td>Adreno 6xx</td><td>865/888-era devices</td><td class="status-test">Needs testing</td></tr>
+</table>
+</section>
+
+<section id="troubleshooting">
+<h2>Troubleshooting</h2>
+<h3>Battle.net is black or blank</h3>
+<p>Try the scripts in this order: <code>Launch-BattleNet.bat</code>, <code>Launch-BattleNet-disable-gpu.bat</code>, then <code>Launch-BattleNet-in-process-gpu.bat</code>. Battle.net's Chromium UI can be temperamental under Wine.</p>
+<h3>Pipeline assert / game silently exits</h3>
+<p>Confirm the patched Turnip driver is selected. Stock V32 can render cleanly at first but hit the WoW pipeline issue later.</p>
+<h3>Corrupted stripes</h3>
+<p>That usually means the Turnip base is wrong for the GPU family. The old A740-oriented RP6 driver is not the correct choice for A830/A840.</p>
+<h3>A830</h3>
+<p>Keep <code>TU_DEBUG=noconform,sysmem</code>.</p>
+<h3>1080p fails</h3>
+<p>Return to 1280×720 while testing. The A840 test found 1080p could trigger a different shader path and reproduce the pipeline failure.</p>
+</section>
+
+<section>
+<h2>Source patches</h2>
+<ul>
+<li><a href="patches/mesa/limit-barycentric-waits-to-current-block.patch">IR3 scheduler barycentric-block skip</a></li>
+<li><a href="patches/mesa/diagnostic-logging-and-icd-exports.patch">Mesa diagnostic + ICD export patch</a></li>
+<li><a href="patches/wine/wine-arm64-copied-syscall-proton11.patch">Wine ARM64 copied-syscall patch</a></li>
+<li><a href="patches/wine/NLS-fallback-allocation.patch">Wine NLS fallback allocation patch</a></li>
+</ul>
+</section>
+
+<footer>
+<p><strong>Unofficial community project.</strong> Not affiliated with Blizzard, GameNative, Mesa, Qualcomm or Valve. World of Warcraft and Battle.net are Blizzard trademarks. No game data or account information is distributed here.</p>
+<p><a href="README.md">Repository README</a> · <a href="docs/VIDEO-GUIDE.md">YouTube guide outline</a> · <a href="docs/TROUBLESHOOTING.md">Troubleshooting</a></p>
+</footer>
+</div>
+</body>
+</html>
