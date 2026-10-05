@@ -1,4 +1,4 @@
-name: Pixel11 PowerVR v3
+name: Pixel11 PowerVR v4
 
 on:
   push:
@@ -47,10 +47,10 @@ jobs:
       - name: Stage artifact
         run: |
           mkdir out
-          cp src/app/build/outputs/apk/modern/debug/app-modern-debug.apk out/WoW-Forever-Pixel11-PowerVR-v3-DIAGNOSTIC.apk
-          sha256sum out/WoW-Forever-Pixel11-PowerVR-v3-DIAGNOSTIC.apk > out/SHA256SUMS.txt
+          cp src/app/build/outputs/apk/modern/debug/app-modern-debug.apk out/WoW-Forever-Pixel11-PowerVR-v4-DIAGNOSTIC.apk
+          sha256sum out/WoW-Forever-Pixel11-PowerVR-v4-DIAGNOSTIC.apk > out/SHA256SUMS.txt
 
       - uses: actions/upload-artifact@v4
         with:
-          name: pixel11-powervr-v3
+          name: pixel11-powervr-v4
           path: out
