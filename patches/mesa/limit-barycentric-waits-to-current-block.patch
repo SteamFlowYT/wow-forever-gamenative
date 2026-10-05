@@ -1,0 +1,16 @@
+--- a/src/freedreno/ir3/ir3_sched.c
++++ b/src/freedreno/ir3/ir3_sched.c
+@@ -505,6 +505,13 @@
+          struct ir3_instruction *baryf = ir->baryfs[i];
+          if (baryf->flags & IR3_INSTR_UNUSED)
+             continue;
++         /* Input loads which cannot be hoisted may live in later blocks.
++          * This scheduler only orders one block; waiting for another block
++          * cannot make progress.  Legalization disables early input release
++          * when varying fetches remain outside the start block.
++          */
++         if (baryf->block != instr->block)
++            continue;
+          if (!is_scheduled(baryf)) {
+             notes->blocked_kill = true;
+             return false;
