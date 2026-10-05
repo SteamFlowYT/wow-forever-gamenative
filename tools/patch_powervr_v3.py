@@ -10,14 +10,14 @@ replacements = {
     'var shouldAutoLaunch = true': 'var shouldAutoLaunch = false',
     'statusText = "Configuring Adreno 740 container..."': 'statusText = "Configuring Pixel 11 PowerVR diagnostic profile..."',
     'put("screenSize", "1920x1080")': 'put("screenSize", "1280x720")',
-    'put("graphicsDriver", "Wrapper")': 'put("graphicsDriver", "Wrapper-gamenative")',
+    'put("graphicsDriver", "Wrapper")': 'put("graphicsDriver", "Wrapper")',
     'put("graphicsDriverVersion", "Turnip-WoW-scheduler-test")': 'put("graphicsDriverVersion", "System")',
     'put("graphicsDriverConfig", "version=Turnip-WoW-scheduler-test,adrenotoolsTurnip=1,resourceType=buffer,bcnEmulation=auto,quality=high")':
-        'put("graphicsDriverConfig", "version=System,adrenotoolsTurnip=0,resourceType=auto,bcnEmulation=full,bcnEmulationType=software,bcnEmulationCache=1,quality=high,presentMode=fifo,vulkanVersion=1.3,gpuName=Device,blacklistedExtensions=,maxDeviceMemory=0,syncFrame=0,disablePresentWait=0")',
+        'put("graphicsDriverConfig", "version=System,adrenotoolsTurnip=1,resourceType=buffer,bcnEmulation=auto,quality=high")',
     'text = "Snapdragon 8 Gen 2 / Adreno 740 Edition"':
-        'text = "Pixel 11 / Tensor G6 / PowerVR Diagnostic v4"',
+        'text = "Pixel 11 / Tensor G6 / PowerVR Diagnostic v5"',
     'CheckItem(label = "Turnip Driver & Proton 11 ARM64EC (Bundled)", ready = true)':
-        'CheckItem(label = "PowerVR system Vulkan + GameNative wrapper + CPU BCn", ready = true)',
+        'CheckItem(label = "PowerVR system Vulkan + GameNative Wrapper + CPU BCn", ready = true)',
 }
 for old, new in replacements.items():
     if old not in text:
@@ -28,7 +28,7 @@ env_prefix = 'put("envVars", "WRAPPER_MAX_IMAGE_COUNT=0 '
 env_line = next((line for line in text.splitlines() if env_prefix in line), None)
 if env_line is None:
     raise RuntimeError("WoW envVars line not found")
-new_env = '                    put("envVars", "WRAPPER_MAX_IMAGE_COUNT=0 WINEESYNC=0 MESA_VK_WSI_PRESENT_MODE=fifo DXVK_LOG_LEVEL=debug VKD3D_SHADER_MODEL=6_0 PULSE_LATENCY_MSEC=144")'
+new_env = '                    put("envVars", "WRAPPER_MAX_IMAGE_COUNT=0 ZINK_DESCRIPTORS=lazy ZINK_DEBUG=compact,deck_emu MESA_SHADER_CACHE_DISABLE=false MESA_SHADER_CACHE_MAX_SIZE=512MB mesa_glthread=true WINEESYNC=0 MESA_VK_WSI_PRESENT_MODE=mailbox VKD3D_SHADER_MODEL=6_0 PULSE_LATENCY_MSEC=144 WRAPPER_LOG_LEVEL=debug DXVK_LOG_LEVEL=debug DXVK_LOG_PATH=/sdcard/Download")'
 text = text.replace(env_line, new_env, 1)
 wow.write_text(text)
 
@@ -85,7 +85,7 @@ emergency = marker + """
             shape = MaterialTheme.shapes.small,
         ) {
             Text(
-                text = "PowerVR v4 | GameNative + software BCn | 720p",
+                text = "PowerVR v5 | known-good launch + PowerVR wrapper r5",
                 modifier = Modifier.padding(horizontal = 10.dp, vertical = 7.dp),
                 fontSize = 11.sp,
                 fontWeight = FontWeight.Bold,
@@ -129,4 +129,4 @@ replacement = """            if (onAbort != null) {
 bs = bs.replace(needle, replacement, 1)
 boot.write_text(bs)
 
-print("PowerVR diagnostic v4 patch applied")
+print("PowerVR diagnostic v5 patch applied")
