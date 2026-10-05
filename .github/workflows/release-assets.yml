@@ -45,8 +45,17 @@ jobs:
         run: |
           set -euo pipefail
           TAG="v1.0.0"
+          ASSETS=(
+            release/proton-11.0-90624-arm64ec.wcp
+            release/dxvk-2.4.1-wow-aarch64-test.wcp
+            release/turnip-wow-scheduler-test.zip
+            release/Turnip-V32-RP6sched-A8xx.zip
+            release/SHA256SUMS.txt
+          )
+
           if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
-            gh release upload "$TAG" release/* --repo "$GITHUB_REPOSITORY" --clobber
+            gh release delete-asset "$TAG" expected.sha256 --repo "$GITHUB_REPOSITORY" -y || true
+            gh release upload "$TAG" "${ASSETS[@]}" --repo "$GITHUB_REPOSITORY" --clobber
           else
-            gh release create "$TAG" release/*               --repo "$GITHUB_REPOSITORY"               --title "WoW Forever GameNative compatibility bundle v1.0.0"               --notes "GameNative compatibility components and Turnip drivers for the WoW Forever ARM64 setup. Includes the original RP6/Adreno 740 driver and the patched Gen8 A830/A840 driver. No Blizzard game files are included."
+            gh release create "$TAG" "${ASSETS[@]}"               --repo "$GITHUB_REPOSITORY"               --title "WoW Forever GameNative compatibility bundle v1.0.0"               --notes "GameNative compatibility components and Turnip drivers for the WoW Forever ARM64 setup. Includes the original RP6/Adreno 740 driver and the patched Gen8 A830/A840 driver. No Blizzard game files are included."
           fi
