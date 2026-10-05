@@ -17,7 +17,7 @@ replacements = {
     'text = "Snapdragon 8 Gen 2 / Adreno 740 Edition"':
         'text = "Pixel 11 / Tensor G6 / PowerVR Diagnostic v5"',
     'CheckItem(label = "Turnip Driver & Proton 11 ARM64EC (Bundled)", ready = true)':
-        'CheckItem(label = "PowerVR system Vulkan + GameNative Wrapper + CPU BCn", ready = true)',
+        'CheckItem(label = "PowerVR system Vulkan + known-good Wrapper path", ready = true)',
 }
 for old, new in replacements.items():
     if old not in text:
@@ -93,6 +93,37 @@ emergency = marker + """
         }
 """
 xs = xs.replace(marker, emergency, 1)
+
+# Preserve the exact previously-working "Wrapper" selection, but replace only
+# libvulkan_wrapper.so on PowerVR with upstream v0.0.5r5 after GameNative has
+# extracted its normal wrapper component.
+wrapper_hook = """        if (adrenoToolsDriverId !== "System") {
+            val adrenotoolsManager: AdrenotoolsManager = AdrenotoolsManager(context)
+            adrenotoolsManager.setDriverById(envVars, imageFs, adrenoToolsDriverId)
+        }
+"""
+if wrapper_hook not in xs:
+    raise RuntimeError("Wrapper hook insertion point not found")
+wrapper_replace = wrapper_hook + """
+        val rendererNameForPowerVr = GPUInformation.getRenderer(null, null) ?: ""
+        val isPowerVrDevice = rendererNameForPowerVr.contains("PowerVR", ignoreCase = true) ||
+            rendererNameForPowerVr.contains("Imagination", ignoreCase = true)
+        if (isPowerVrDevice && graphicsDriver.equals("Wrapper", ignoreCase = true)) {
+            try {
+                val target = File(rootDir, "usr/lib/libvulkan_wrapper.so")
+                target.parentFile?.mkdirs()
+                context.assets.open("powervr/libvulkan_wrapper.so").use { input ->
+                    target.outputStream().use { output -> input.copyTo(output) }
+                }
+                target.setExecutable(true, false)
+                target.setReadable(true, false)
+                Timber.i("Pixel11 PowerVR: installed bundled bionic-vulkan-wrapper v0.0.5r5")
+            } catch (e: Exception) {
+                Timber.e(e, "Pixel11 PowerVR: failed to install bundled wrapper r5")
+            }
+        }
+"""
+xs = xs.replace(wrapper_hook, wrapper_replace, 1)
 xserver.write_text(xs)
 
 
