@@ -1,0 +1,5 @@
+*.wcp
+*.zip
+!assets/site/*.zip
+.DS_Store
+Thumbs.db
