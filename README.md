@@ -15,7 +15,6 @@ A clean GameNative setup for running the native Windows ARM64 WoW Forever Beta c
 Other docs:
 - [Compatibility](docs/COMPATIBILITY.md)
 - [Troubleshooting](docs/TROUBLESHOOTING.md)
-- [YouTube video guide outline](docs/VIDEO-GUIDE.md)
 
 ## Architecture
 
@@ -74,6 +73,6 @@ See `drivers/adreno-740-legacy/README.md` for provenance and warnings.
 - Wine / Proton
 - DXVK
 - GameNative
-- RP6 all-in-one test work
+- Original RP6 all-in-one test work by [u/BryTheGuy06](https://www.reddit.com/user/BryTheGuy06/)
 
 Blizzard owns World of Warcraft and Battle.net. No Blizzard game files or account data are included.
