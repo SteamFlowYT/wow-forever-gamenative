@@ -60,12 +60,16 @@ footer{margin-top:70px;border-top:1px solid var(--line);padding:28px 0 50px;colo
 
 <section id="downloads">
 <h2>Downloads</h2>
-<p>The large binaries belong in GitHub Releases. The source patches and scripts stay in the repository.</p>
+<p>All runtime files and launcher scripts can be downloaded directly from the GitHub Release. Source patches stay in the repository.</p>
 
 <div class="download"><div><strong>Custom ARM64 Proton</strong><small>Wine 11 / ARM64EC package with the WoW ARM64 fixes</small></div><a class="btn" href="https://github.com/SteamFlowYT/wow-forever-gamenative/releases/latest/download/proton-11.0-90624-arm64ec.wcp">Download</a></div>
 <div class="download"><div><strong>Custom ARM64 DXVK</strong><small>D3D11 + DXGI, pure Windows ARM64</small></div><a class="btn" href="https://github.com/SteamFlowYT/wow-forever-gamenative/releases/latest/download/dxvk-2.4.1-wow-aarch64-test.wcp">Download</a></div>
 <div class="download"><div><strong>Patched A8xx Turnip</strong><small>Gen8 V32 + WoW scheduler fix; used on A840 and A830</small></div><a class="btn" href="https://github.com/SteamFlowYT/wow-forever-gamenative/releases/latest/download/Turnip-V32-RP6sched-A8xx.zip">Download</a></div>
 <div class="download"><div><strong>Original A740 / RP6 Turnip</strong><small>Authentic original <code>turnip-wow-scheduler-test.zip</code>; verified SHA-256</small></div><a class="btn secondary" href="https://github.com/SteamFlowYT/wow-forever-gamenative/releases/latest/download/turnip-wow-scheduler-test.zip">Download</a></div>
+<div class="download"><div><strong>Direct WoW launcher</strong><small>Launches the ARM64 WoW client directly with <code>-d3d11</code></small></div><a class="btn" href="https://github.com/SteamFlowYT/wow-forever-gamenative/releases/latest/download/Launch-WoW-Direct.bat">Download</a></div>
+<div class="download"><div><strong>Battle.net launcher</strong><small>Normal Battle.net launcher for the same GameNative container</small></div><a class="btn secondary" href="https://github.com/SteamFlowYT/wow-forever-gamenative/releases/latest/download/Launch-BattleNet.bat">Download</a></div>
+<div class="download"><div><strong>Battle.net — disable GPU</strong><small>Diagnostic launcher to try if Battle.net opens black or blank</small></div><a class="btn secondary" href="https://github.com/SteamFlowYT/wow-forever-gamenative/releases/latest/download/Launch-BattleNet-disable-gpu.bat">Download</a></div>
+<div class="download"><div><strong>Battle.net — in-process GPU</strong><small>Alternative diagnostic launcher for Battle.net rendering issues</small></div><a class="btn secondary" href="https://github.com/SteamFlowYT/wow-forever-gamenative/releases/latest/download/Launch-BattleNet-in-process-gpu.bat">Download</a></div>
 <div class="download"><div><strong>Checksums</strong><small>SHA-256 for release assets</small></div><a class="btn secondary" href="https://github.com/SteamFlowYT/wow-forever-gamenative/releases/latest/download/SHA256SUMS.txt">View</a></div>
 
 <div class="warn notice"><strong>Not included:</strong> World of Warcraft game data, Battle.net installer, account information, or Blizzard artwork. Download Battle.net from Blizzard and use your own account/client access.</div>
@@ -119,11 +123,17 @@ MESA_VK_WSI_PRESENT_MODE=mailbox</pre>
 <h2>Updating later</h2>
 <p>No second copy is required.</p>
 <ol>
-<li>Launch Battle.net inside the same GameNative card/container.</li>
+<li>Launch Battle.net inside the same GameNative card/container using <a href="https://github.com/SteamFlowYT/wow-forever-gamenative/releases/latest/download/Launch-BattleNet.bat"><code>Launch-BattleNet.bat</code></a>.</li>
 <li>Let it patch <code>C:\Program Files (x86)\World of Warcraft</code>.</li>
 <li>Close Battle.net.</li>
-<li>Launch WoW directly again.</li>
+<li>Launch WoW again with <a href="https://github.com/SteamFlowYT/wow-forever-gamenative/releases/latest/download/Launch-WoW-Direct.bat"><code>Launch-WoW-Direct.bat</code></a>.</li>
 </ol>
+
+<h3>Launcher scripts</h3>
+<div class="download"><div><strong>Launch-WoW-Direct.bat</strong><small>Normal direct WoW launcher</small></div><a class="btn" href="https://github.com/SteamFlowYT/wow-forever-gamenative/releases/latest/download/Launch-WoW-Direct.bat">Download</a></div>
+<div class="download"><div><strong>Launch-BattleNet.bat</strong><small>Normal Battle.net launcher</small></div><a class="btn secondary" href="https://github.com/SteamFlowYT/wow-forever-gamenative/releases/latest/download/Launch-BattleNet.bat">Download</a></div>
+<div class="download"><div><strong>Launch-BattleNet-disable-gpu.bat</strong><small>Try this if Battle.net opens black or blank</small></div><a class="btn secondary" href="https://github.com/SteamFlowYT/wow-forever-gamenative/releases/latest/download/Launch-BattleNet-disable-gpu.bat">Download</a></div>
+<div class="download"><div><strong>Launch-BattleNet-in-process-gpu.bat</strong><small>Second Battle.net rendering diagnostic</small></div><a class="btn secondary" href="https://github.com/SteamFlowYT/wow-forever-gamenative/releases/latest/download/Launch-BattleNet-in-process-gpu.bat">Download</a></div>
 </section>
 
 <section id="compat">
