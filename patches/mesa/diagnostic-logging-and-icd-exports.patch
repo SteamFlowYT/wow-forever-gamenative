@@ -1,0 +1,32 @@
+--- a/src/freedreno/ir3/ir3_sched.c
++++ b/src/freedreno/ir3/ir3_sched.c
+@@ -1222,7 +1222,16 @@
+             d("unscheduled_list:");
+             foreach_instr (instr, &ctx->unscheduled_list)
+                di(instr, "unscheduled: ");
+-            assert(0);
++            mesa_loge("CODEX_SCHED_FAILURE blocked_kill=%u remaining_kills=%d addr0=%u addr1=%u", notes.blocked_kill, ctx->remaining_kills, notes.addr0_conflict, notes.addr1_conflict);
++            ir3_print(ir);
++            mesa_loge("CODEX_SCHED_FAILURE unscheduled instructions follow");
++            foreach_instr (pending, &ctx->unscheduled_list) {
++               mesa_loge("CODEX_PENDING serial=%u opcode=%u", pending->serialno, pending->opc);
++               ir3_print_instr(pending);
++               foreach_ssa_src (dep, pending) {
++                  mesa_loge("CODEX_DEP serial=%u scheduled=%u same_block=%u", dep->serialno, is_scheduled(dep), dep->block == pending->block);
++               }
++            }
+             ctx->error = true;
+             return;
+          }
+--- a/src/vulkan/vulkan-android.sym
++++ b/src/vulkan/vulkan-android.sym
+@@ -4,6 +4,9 @@
+ 		# as HAL_MODULE_INFO_SYM (which is just a #define for HMI) and it's an
+ 		# instance of struct hwvulkan_module_t.
+ 		HMI;
++		vk_icdGetInstanceProcAddr;
++		vk_icdGetPhysicalDeviceProcAddr;
++		vk_icdNegotiateLoaderICDInterfaceVersion;
+ 
+ 	local:
+ 		# When static linking LLVM, all its symbols are public API.
