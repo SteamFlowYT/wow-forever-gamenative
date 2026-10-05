@@ -36,6 +36,10 @@ jobs:
           chmod +x gradlew tools/fetch_components.sh
           tools/fetch_components.sh
 
+      - name: Configure Android SDK
+        working-directory: src
+        run: echo "sdk.dir=$ANDROID_HOME" > local.properties
+
       - name: Build debug APK
         working-directory: src
         run: ./gradlew assembleModernDebug --stacktrace
