@@ -1,4 +1,4 @@
-name: Pixel11 PowerVR v4
+name: Pixel11 PowerVR v5
 
 on:
   push:
@@ -27,6 +27,12 @@ jobs:
         working-directory: src
         run: git checkout 32d27ae212a492d911044026cbd4533b2f00931f
 
+      - name: Bundle upstream PowerVR-aware wrapper r5
+        run: |
+          mkdir -p src/app/src/main/assets/powervr
+          curl -L --fail --retry 3             https://github.com/leegao/bionic-vulkan-wrapper/releases/download/v0.0.5r5/libvulkan_wrapper.so             -o src/app/src/main/assets/powervr/libvulkan_wrapper.so
+          echo "520ec0ba1b5a404b12282d18f863761a44703012be6e2421b0f5adcb9d47be11  src/app/src/main/assets/powervr/libvulkan_wrapper.so" | sha256sum -c -
+
       - name: Patch PowerVR profile
         run: python3 tools/patch_powervr_v3.py src
 
@@ -47,10 +53,10 @@ jobs:
       - name: Stage artifact
         run: |
           mkdir out
-          cp src/app/build/outputs/apk/modern/debug/app-modern-debug.apk out/WoW-Forever-Pixel11-PowerVR-v4-DIAGNOSTIC.apk
-          sha256sum out/WoW-Forever-Pixel11-PowerVR-v4-DIAGNOSTIC.apk > out/SHA256SUMS.txt
+          cp src/app/build/outputs/apk/modern/debug/app-modern-debug.apk out/WoW-Forever-Pixel11-PowerVR-v5-DIAGNOSTIC.apk
+          sha256sum out/WoW-Forever-Pixel11-PowerVR-v5-DIAGNOSTIC.apk > out/SHA256SUMS.txt
 
       - uses: actions/upload-artifact@v4
         with:
-          name: pixel11-powervr-v4
+          name: pixel11-powervr-v5
           path: out
