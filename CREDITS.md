@@ -1,5 +1,9 @@
 # Credits and source revisions
 
+## Original RP6 all-in-one test work
+
+Special credit to Reddit user **[u/BryTheGuy06](https://www.reddit.com/user/BryTheGuy06/)** for the original RP6 all-in-one test work that this project builds on.
+
 ## GameNative
 Tested reference version: GameNative 1.2.1
 
