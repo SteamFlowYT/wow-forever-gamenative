@@ -10,14 +10,14 @@ replacements = {
     'var shouldAutoLaunch = true': 'var shouldAutoLaunch = false',
     'statusText = "Configuring Adreno 740 container..."': 'statusText = "Configuring Pixel 11 PowerVR diagnostic profile..."',
     'put("screenSize", "1920x1080")': 'put("screenSize", "1280x720")',
-    'put("graphicsDriver", "Wrapper")': 'put("graphicsDriver", "Wrapper-leegao")',
+    'put("graphicsDriver", "Wrapper")': 'put("graphicsDriver", "Wrapper-gamenative")',
     'put("graphicsDriverVersion", "Turnip-WoW-scheduler-test")': 'put("graphicsDriverVersion", "System")',
     'put("graphicsDriverConfig", "version=Turnip-WoW-scheduler-test,adrenotoolsTurnip=1,resourceType=buffer,bcnEmulation=auto,quality=high")':
         'put("graphicsDriverConfig", "version=System,adrenotoolsTurnip=0,resourceType=auto,bcnEmulation=full,bcnEmulationType=software,bcnEmulationCache=1,quality=high,presentMode=fifo,vulkanVersion=1.3,gpuName=Device,blacklistedExtensions=,maxDeviceMemory=0,syncFrame=0,disablePresentWait=0")',
     'text = "Snapdragon 8 Gen 2 / Adreno 740 Edition"':
-        'text = "Pixel 11 / Tensor G6 / PowerVR Diagnostic v3"',
+        'text = "Pixel 11 / Tensor G6 / PowerVR Diagnostic v4"',
     'CheckItem(label = "Turnip Driver & Proton 11 ARM64EC (Bundled)", ready = true)':
-        'CheckItem(label = "PowerVR system Vulkan + leegao wrapper + CPU BCn", ready = true)',
+        'CheckItem(label = "PowerVR system Vulkan + GameNative wrapper + CPU BCn", ready = true)',
 }
 for old, new in replacements.items():
     if old not in text:
@@ -28,7 +28,7 @@ env_prefix = 'put("envVars", "WRAPPER_MAX_IMAGE_COUNT=0 '
 env_line = next((line for line in text.splitlines() if env_prefix in line), None)
 if env_line is None:
     raise RuntimeError("WoW envVars line not found")
-new_env = '                    put("envVars", "WRAPPER_MAX_IMAGE_COUNT=0 WINEESYNC=0 MESA_VK_WSI_PRESENT_MODE=fifo USE_CPU_BCN=all DISABLE_EXTERNAL_FD=1 DXVK_LOG_LEVEL=debug VKD3D_SHADER_MODEL=6_0 PULSE_LATENCY_MSEC=144")'
+new_env = '                    put("envVars", "WRAPPER_MAX_IMAGE_COUNT=0 WINEESYNC=0 MESA_VK_WSI_PRESENT_MODE=fifo DXVK_LOG_LEVEL=debug VKD3D_SHADER_MODEL=6_0 PULSE_LATENCY_MSEC=144")'
 text = text.replace(env_line, new_env, 1)
 wow.write_text(text)
 
@@ -85,7 +85,7 @@ emergency = marker + """
             shape = MaterialTheme.shapes.small,
         ) {
             Text(
-                text = "PowerVR v3 SAFE | leegao + CPU BCn | 720p",
+                text = "PowerVR v4 | GameNative + software BCn | 720p",
                 modifier = Modifier.padding(horizontal = 10.dp, vertical = 7.dp),
                 fontSize = 11.sp,
                 fontWeight = FontWeight.Bold,
@@ -95,4 +95,38 @@ emergency = marker + """
 xs = xs.replace(marker, emergency, 1)
 xserver.write_text(xs)
 
-print("PowerVR diagnostic v3 patch applied")
+
+
+boot = root / "app/src/main/java/app/gamenative/ui/components/BootingSplash.kt"
+bs = boot.read_text()
+needle = """            if (onAbort != null) {
+                IconButton(
+                    onClick = onAbort,
+"""
+if needle not in bs:
+    raise RuntimeError("BootingSplash abort hook not found")
+replacement = """            if (onAbort != null) {
+                androidx.compose.material3.Button(
+                    onClick = onAbort,
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(12.dp),
+                    colors = androidx.compose.material3.ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.error,
+                        contentColor = MaterialTheme.colorScheme.onError,
+                    ),
+                ) {
+                    Text(
+                        text = "ABORT LAUNCH",
+                        fontWeight = FontWeight.Black,
+                        fontSize = 12.sp,
+                    )
+                }
+
+                IconButton(
+                    onClick = onAbort,
+"""
+bs = bs.replace(needle, replacement, 1)
+boot.write_text(bs)
+
+print("PowerVR diagnostic v4 patch applied")
