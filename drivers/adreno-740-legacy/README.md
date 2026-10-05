@@ -6,6 +6,8 @@ Release asset:
 
 This is the **original binary from the RP6 all-in-one test bundle**, supplied later and verified against the bundle manifest.
 
+Credit for the original RP6 all-in-one test work goes to Reddit user **[u/BryTheGuy06](https://www.reddit.com/user/BryTheGuy06/)**.
+
 SHA-256:
 
 `02384f692735515f73aad8a544bc640abe3f35fe18e8df2e667be712c442e54c`
