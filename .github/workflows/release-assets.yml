@@ -16,6 +16,9 @@ jobs:
     env:
       GH_TOKEN: ${{ github.token }}
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Download compatibility components
         run: |
           set -euo pipefail
@@ -30,7 +33,14 @@ jobs:
 
           curl -fL "https://raw.githubusercontent.com/arusiasotto/wow-forever-a840/main/driver/turnip-V32-RP6sched.zip"             -o Turnip-V32-RP6sched-A8xx.zip
 
-      - name: Verify original RP6 components
+      - name: Add launcher scripts
+        run: |
+          cp scripts/Launch-WoW-Direct.bat release/
+          cp scripts/Launch-BattleNet.bat release/
+          cp scripts/Launch-BattleNet-disable-gpu.bat release/
+          cp scripts/Launch-BattleNet-in-process-gpu.bat release/
+
+      - name: Verify components and write checksums
         run: |
           cd release
           cat > expected.sha256 <<'EOF'
@@ -39,7 +49,8 @@ jobs:
           02384f692735515f73aad8a544bc640abe3f35fe18e8df2e667be712c442e54c  turnip-wow-scheduler-test.zip
           EOF
           sha256sum -c expected.sha256
-          sha256sum             proton-11.0-90624-arm64ec.wcp             dxvk-2.4.1-wow-aarch64-test.wcp             turnip-wow-scheduler-test.zip             Turnip-V32-RP6sched-A8xx.zip > SHA256SUMS.txt
+          sha256sum             proton-11.0-90624-arm64ec.wcp             dxvk-2.4.1-wow-aarch64-test.wcp             turnip-wow-scheduler-test.zip             Turnip-V32-RP6sched-A8xx.zip             Launch-WoW-Direct.bat             Launch-BattleNet.bat             Launch-BattleNet-disable-gpu.bat             Launch-BattleNet-in-process-gpu.bat > SHA256SUMS.txt
+          rm expected.sha256
 
       - name: Create or update release
         run: |
@@ -50,12 +61,15 @@ jobs:
             release/dxvk-2.4.1-wow-aarch64-test.wcp
             release/turnip-wow-scheduler-test.zip
             release/Turnip-V32-RP6sched-A8xx.zip
+            release/Launch-WoW-Direct.bat
+            release/Launch-BattleNet.bat
+            release/Launch-BattleNet-disable-gpu.bat
+            release/Launch-BattleNet-in-process-gpu.bat
             release/SHA256SUMS.txt
           )
 
           if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
-            gh release delete-asset "$TAG" expected.sha256 --repo "$GITHUB_REPOSITORY" -y || true
             gh release upload "$TAG" "${ASSETS[@]}" --repo "$GITHUB_REPOSITORY" --clobber
           else
-            gh release create "$TAG" "${ASSETS[@]}"               --repo "$GITHUB_REPOSITORY"               --title "WoW Forever GameNative compatibility bundle v1.0.0"               --notes "GameNative compatibility components and Turnip drivers for the WoW Forever ARM64 setup. Includes the original RP6/Adreno 740 driver and the patched Gen8 A830/A840 driver. No Blizzard game files are included."
+            gh release create "$TAG" "${ASSETS[@]}"               --repo "$GITHUB_REPOSITORY"               --title "WoW Forever GameNative compatibility bundle v1.0.0"               --notes "GameNative compatibility components, Turnip drivers and launcher scripts for the WoW Forever ARM64 setup. Includes the original RP6/Adreno 740 driver and the patched Gen8 A830/A840 driver. No Blizzard game files are included."
           fi
