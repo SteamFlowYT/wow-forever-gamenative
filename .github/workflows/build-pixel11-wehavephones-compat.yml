@@ -1,0 +1,64 @@
+name: Build Pixel 11 WeHavePhones compat APK
+
+on:
+  push:
+    branches:
+      - pixel11-wehavephones-compat
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - name: Checkout helper repo
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Clone WoW Forever Android source
+        run: |
+          git clone https://github.com/jaredgei/wow-forever-android.git src
+          cd src
+          git checkout 32d27ae212a492d911044026cbd4533b2f00931f
+
+      - name: Apply WeHavePhones compatibility layer
+        run: python3 tools/patch_wehavephones_compat.py src .
+
+      - name: Fetch bundled Proton / DXVK components
+        working-directory: src
+        run: |
+          chmod +x gradlew tools/fetch_components.sh
+          tools/fetch_components.sh
+
+      - name: Configure Android SDK
+        working-directory: src
+        run: echo "sdk.dir=$ANDROID_HOME" > local.properties
+
+      - name: Build APK
+        working-directory: src
+        run: ./gradlew assembleModernDebug --stacktrace
+
+      - name: Validate compatibility layer is packaged
+        run: |
+          APK=src/app/build/outputs/apk/modern/debug/app-modern-debug.apk
+          unzip -l "$APK" | grep 'lib/arm64-v8a/libwehavephones_vulkan_compat.so'
+
+      - name: Stage artifact
+        run: |
+          mkdir -p out
+          cp src/app/build/outputs/apk/modern/debug/app-modern-debug.apk out/WoW-Forever-Pixel11-WeHavePhones-Compat.apk
+          sha256sum out/WoW-Forever-Pixel11-WeHavePhones-Compat.apk | tee out/SHA256SUMS.txt
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: pixel11-wehavephones-compat
+          path: out/*
+          if-no-files-found: error
