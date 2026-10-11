@@ -31,6 +31,15 @@ jobs:
       - name: Apply WeHavePhones compatibility layer
         run: python3 tools/patch_wehavephones_compat.py src .
 
+      - name: Build WeHavePhones Vulkan compatibility JNI library
+        run: |
+          yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "ndk;27.3.13750724"
+          NDK="$ANDROID_HOME/ndk/27.3.13750724"
+          CLANG="$NDK/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android29-clang"
+          mkdir -p src/app/src/main/jniLibs/arm64-v8a
+          "$CLANG" -O2 -fPIC -shared -fvisibility=hidden             -Wl,-z,max-page-size=16384             src/app/src/main/cpp/wehavephones_vulkan_compat/wehavephones_vulkan_compat.c             -ldl             -o src/app/src/main/jniLibs/arm64-v8a/libwehavephones_vulkan_compat.so
+          file src/app/src/main/jniLibs/arm64-v8a/libwehavephones_vulkan_compat.so
+
       - name: Fetch bundled Proton / DXVK components
         working-directory: src
         run: |
