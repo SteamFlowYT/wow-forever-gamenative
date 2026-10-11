@@ -1,4 +1,4 @@
-name: Build Pixel11 first-working + compat
+name: Build Pixel11 first-working + compat v7
 
 on:
   push:
@@ -36,6 +36,16 @@ jobs:
           chmod +x gradlew tools/fetch_components.sh
           tools/fetch_components.sh
 
+      - name: Build WeHavePhones Vulkan compat layer as packaged JNI library
+        run: |
+          yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "ndk;27.3.13750724" >/dev/null
+          NDK="$ANDROID_HOME/ndk/27.3.13750724"
+          CLANG="$NDK/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android26-clang"
+          mkdir -p src/app/src/main/jniLibs/arm64-v8a
+          "$CLANG" -shared -fPIC -O2 -fvisibility=hidden             -Wl,-z,max-page-size=16384             pixel11/compat/wehavephones_vulkan_compat.c             -ldl             -o src/app/src/main/jniLibs/arm64-v8a/libwehavephones_vulkan_compat.so
+          file src/app/src/main/jniLibs/arm64-v8a/libwehavephones_vulkan_compat.so
+          sha256sum src/app/src/main/jniLibs/arm64-v8a/libwehavephones_vulkan_compat.so
+
       - name: Configure Android SDK
         working-directory: src
         run: echo "sdk.dir=$ANDROID_HOME" > local.properties
@@ -47,10 +57,11 @@ jobs:
       - name: Stage build
         run: |
           mkdir -p out
-          cp src/app/build/outputs/apk/modern/debug/app-modern-debug.apk             out/WoW-Forever-Pixel11-FIRST-WORKING-COMPAT-v6.apk
-          sha256sum out/WoW-Forever-Pixel11-FIRST-WORKING-COMPAT-v6.apk > out/SHA256SUMS.txt
+          cp src/app/build/outputs/apk/modern/debug/app-modern-debug.apk             out/WoW-Forever-Pixel11-FIRST-WORKING-COMPAT-v7.apk
+          sha256sum out/WoW-Forever-Pixel11-FIRST-WORKING-COMPAT-v7.apk > out/SHA256SUMS.txt
+          unzip -l out/WoW-Forever-Pixel11-FIRST-WORKING-COMPAT-v7.apk | grep libwehavephones_vulkan_compat.so
           cat > out/README.txt <<'EOF'
-          Pixel 11 / Tensor G6 / PowerVR v6 experiment
+          Pixel 11 / Tensor G6 / PowerVR v7 experiment
 
           Goal:
           Preserve the exact container/graphics launch profile from the first Pixel APK that reached WoW,
@@ -91,6 +102,6 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: pixel11-first-working-compat-v6
+          name: pixel11-first-working-compat-v7
           path: out/*
           if-no-files-found: error
