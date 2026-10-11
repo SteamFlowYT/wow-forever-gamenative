@@ -157,6 +157,16 @@ install_block = '''        val wrapperQuality = graphicsDriverConfig.get("qualit
 if install_anchor not in xs:
     raise RuntimeError("BCn wrapper-quality anchor not found")
 xs = xs.replace(install_anchor, install_block, 1)
+# Keep Android system navigation visible on experimental non-Adreno builds so a
+# bad Vulkan path can never trap the user inside the game surface.
+old_ui = 'PluviaApp.events.emit(AndroidEvent.SetSystemUIVisibility(false))'
+if old_ui in xs:
+    xs = xs.replace(
+        old_ui,
+        'PluviaApp.events.emit(AndroidEvent.SetSystemUIVisibility(true)) // experimental Pixel safety',
+        1,
+    )
+
 xserver.write_text(xs)
 
 print("Applied WeHavePhones system-Vulkan compatibility layer to Pixel/non-Adreno profile.")
